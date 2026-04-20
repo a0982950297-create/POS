@@ -367,19 +367,24 @@ function renderProductStats(){
   box.innerHTML = "";
 
   // ⭐ 固定順序（對帳用）
-  products.forEach(p=>{
-    const data = stats[p.name] || {qty:0, amount:0};
+Object.keys(stats).forEach(name=>{
+  const data = stats[name];
 
-    box.innerHTML += `
-      <div class="stats-card">
-        <div class="name">${p.name}</div>
-        <div class="info">
-          <span>數量：${data.qty}</span>
-          <span>金額：$${data.amount}</span>
-        </div>
+  box.innerHTML += `
+    <div class="stats-card">
+      <div class="name">${name}</div>
+      <div class="info">
+        <span>數量：${data.qty}</span>
+        <span>金額：$${data.amount}</span>
       </div>
-    `;
-  });
+    </div>
+  `;
+});
+
+if(Object.keys(stats).length === 0){
+  box.innerHTML = "今日無銷售";
+  return;
+}
 
   // ⭐ 總營收
   box.innerHTML += `
@@ -392,24 +397,38 @@ function renderProductStats(){
 
 // ===== 本月銷售 =====
 function renderMonthProductStats(){
-  const box=document.getElementById("monthProductStats");
+  const box = document.getElementById("monthProductStats");
   if(!box) return;
 
-  const stats={};
-  let now=new Date();
+  const stats = {};
+  let now = new Date();
 
   orders.forEach(o=>{
-    let d=new Date(o.time);
-    if(d.getMonth()===now.getMonth()){
+    let d = new Date(o.time);
+
+    if(
+      d.getFullYear() === now.getFullYear() &&
+      d.getMonth() === now.getMonth()
+    ){
       o.items.forEach(i=>{
-        stats[i.name]=(stats[i.name]||0)+i.qty;
+        stats[i.name] = (stats[i.name] || 0) + i.qty;
       });
     }
   });
 
-  box.innerHTML="";
-  products.forEach(p=>{
-    box.innerHTML+=`<div>${p.name}：${stats[p.name]||0}</div>`;
+  box.innerHTML = "";
+
+  const keys = Object.keys(stats);
+
+  // ⭐ 沒有任何銷售
+  if(keys.length === 0){
+    box.innerHTML = "本月尚無商品銷售";
+    return;
+  }
+
+  // ⭐ 只顯示有賣的
+  keys.forEach(name=>{
+    box.innerHTML += `<div>${name}：${stats[name]}</div>`;
   });
 }
 
@@ -421,16 +440,18 @@ function renderHistory(){
   box.innerHTML="";
 
   orders.slice().reverse().forEach((o, idx)=>{
+
+    // ⭐ 真實 index（重點）
     const realIndex = orders.length - 1 - idx;
 
     box.innerHTML += `
       <div class="history-item">
 
-        <div onclick="toggleOrder('${o.id}')" style="cursor:pointer;">
+        <div onclick="toggleOrder('${o.id}')">
           #${o.id} 💰${o.total} 📦${o.qty}
         </div>
 
-        <div id="detail-${o.id}" style="display:none; margin-left:10px;">
+        <div id="detail-${o.id}" style="display:block">
           ${o.items.map(i=>`${i.name} x${i.qty}`).join("<br>")}
           <br>
           <button onclick="deleteOrder(${realIndex})">刪除</button>
@@ -457,27 +478,44 @@ function renderMonthDaily(){
   let now = new Date();
 
   orders.forEach(o=>{
-    let d=new Date(o.time);
+    let d = new Date(o.time);
 
     if(
-      d.getFullYear()===now.getFullYear() &&
-      d.getMonth()===now.getMonth()
+      d.getFullYear() === now.getFullYear() &&
+      d.getMonth() === now.getMonth()
     ){
       const day = d.getDate();
 
-      if(!map[day]) map[day]=[];
-      map[day].push(o);
+      if(!map[day]){
+        map[day] = {
+          list: [],
+          total: 0
+        };
+      }
+
+      map[day].list.push(o);
+      map[day].total += o.total; // ⭐累加金額
     }
   });
 
-  box.innerHTML="";
+  box.innerHTML = "";
 
-  Object.keys(map)
+  const validDays = Object.keys(map);
+
+  if(validDays.length === 0){
+    box.innerHTML = "本月尚無銷售";
+    return;
+  }
+
+  validDays
     .sort((a,b)=>b-a)
     .forEach(day=>{
+      const count = map[day].list.length;
+      const total = map[day].total;
+
       box.innerHTML += `
         <div onclick="showDayDetail(${day})" style="cursor:pointer;">
-          ${day}號（${map[day].length}筆）← 點我
+          ${day}號（${count}筆）$${total}
         </div>
       `;
     });
@@ -549,20 +587,6 @@ function renderToday(){
     }
   });
 
-
-  let currentInput = "";
-
-
-function updateCash(){
-  const input = document.getElementById("cashInput");
-
-  if(input){
-    input.value = currentInput; 
-  }
-
-  calculateChange();
-}
-
   todayRevenue.innerText = revenue;
   todayOrders.innerText = count;
   todayQty.innerText = qty;
@@ -598,14 +622,7 @@ function clearNum(){
   updateCash();
 }
 
-function updateCash(){
-  const input = document.getElementById("cashInput");
-  if(input){
-    input.value = currentInput;
-  }
 
-  calculateChange();
-}
 
 
 // 刪除一位（超重要）
@@ -638,6 +655,67 @@ function clearCash(){
   }
 }
 
+let lastDeletedOrder = null;
+let undoTimer = null;
+
+function deleteOrder(index){
+
+  // 記住被刪的
+  lastDeletedOrder = {
+    data: orders[index],
+    index: index
+  };
+
+  orders.splice(index, 1);
+
+  localStorage.setItem("orders", JSON.stringify(orders));
+
+  renderHistory();
+  renderPOSCore();
+  renderMonthDaily();
+}
+
+
+function showUndo(){
+  const bar = document.getElementById("undoBar");
+  if(!bar) return;
+
+  if(undoTimer){
+    clearTimeout(undoTimer);
+  }
+
+  bar.classList.add("show");
+
+  undoTimer = setTimeout(()=>{
+    bar.classList.remove("show");
+  }, 3000);
+}
+
+function undoDelete(){
+  if(!lastDeletedOrder) return;
+
+  if(undoTimer){
+    clearTimeout(undoTimer);
+  }
+
+  orders.splice(lastDeletedOrder.index, 0, lastDeletedOrder.data);
+
+  localStorage.setItem("orders", JSON.stringify(orders));
+
+  renderHistory();
+  renderPOSCore();
+
+  document.getElementById("undoBar").classList.remove("show");
+}
+
+function updateCash(){
+  const input = document.getElementById("cashInput");
+  if(input){
+    input.value = currentInput;
+  }
+
+  calculateChange();
+}
 
 // ===== 啟動 =====
 renderPOSCore();

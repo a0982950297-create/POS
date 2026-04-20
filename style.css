@@ -514,3 +514,28 @@ body{
   }
 
 }
+
+.undo-bar{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#333;
+  color:#fff;
+  padding:10px 20px;
+  border-radius:20px;
+  display:none;
+}
+
+.undo-bar.show{
+  display:block;
+}
+
+.undo-bar button{
+  margin-left:10px;
+  background:#4caf50;
+  border:none;
+  color:#fff;
+  padding:5px 10px;
+  border-radius:5px;
+}
