@@ -1,0 +1,516 @@
+/* ===== 全域 ===== */
+body{
+  margin:0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background:#eef1f5;
+}
+
+/* ===== App 容器 ===== */
+.container{
+  display:flex;
+  height:calc(100vh - 60px);
+}
+
+/* ===== 上方導覽（App Tab）===== */
+.top-nav{
+  display:flex;
+  background:#1e1e2f;
+  padding:8px;
+  gap:6px;
+}
+
+.top-nav button{
+  flex:1;
+  padding:12px 0;
+  border:none;
+  border-radius:10px;
+  background:#2c2c3f;
+  color:#aaa;
+  font-size:14px;
+  transition:0.2s;
+}
+
+.top-nav button:active{
+  transform:scale(0.95);
+}
+
+.top-nav button.active{
+  background:#4caf50;
+  color:#fff;
+}
+
+/* ===== 頁面切換 ===== */
+.page{
+  display:none;
+  height:100%;
+}
+
+.page.active{
+  display:block;
+}
+
+/* ===== 左區 ===== */
+.left{
+  width:60%;
+  padding:15px;
+  overflow-y:auto;
+}
+
+/* ===== 右區 ===== */
+.right{
+  width:40%;
+  padding:15px;
+  display:flex;
+  flex-direction:column;
+  background:#ffffff;
+  border-left:1px solid #ddd;
+}
+
+/* ===== 分類 ===== */
+#categoryFilter{
+  margin-bottom:10px;
+}
+
+#categoryFilter button{
+  padding:10px 14px;
+  margin:4px;
+  border:none;
+  border-radius:20px;
+  background:#dcdcdc;
+  font-size:14px;
+}
+
+#categoryFilter button.active{
+  background:#ff9800;
+  color:#fff;
+}
+
+/* ===== 商品按鈕（像 POS） ===== */
+#posMenu{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+#posMenu button{
+  width:30%;
+  height:90px;
+  font-size:18px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,#ffffff,#f1f1f1);
+  box-shadow:0 4px 8px rgba(0,0,0,0.12);
+  transition:0.15s;
+}
+
+#posMenu button:active{
+  transform:scale(0.93);
+}
+
+/* ===== 訂單 ===== */
+#orderList{
+  flex:1;
+  overflow:auto;
+  margin-bottom:10px;
+}
+
+.order-item{
+  padding:10px;
+  margin-bottom:6px;
+  background:#f8f8f8;
+  border-radius:8px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.order-item button{
+  margin-left:6px;
+  padding:6px 10px;
+  border:none;
+  border-radius:6px;
+  background:#ddd;
+}
+
+/* ===== 總金額 ===== */
+.total{
+  font-size:46px;
+  font-weight:bold;
+  text-align:center;
+  margin:10px 0;
+  color:#222;
+}
+
+/* ===== 收銀 ===== */
+.cash-box{
+  background:#f5f5f5;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+
+.cash-box input{
+  width:100%;
+  padding:12px;
+  font-size:20px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+/* 快速按鈕 */
+.quick-cash{
+  margin-top:10px;
+}
+
+.quick-cash button{
+  margin:5px;
+  padding:10px 18px;
+  font-size:18px;
+  border:none;
+  border-radius:8px;
+  background:#2196f3;
+  color:#fff;
+}
+
+/* ===== 找零 ===== */
+.change{
+  margin-top:10px;
+  font-size:28px;
+  font-weight:bold;
+  color:#e53935;
+}
+
+/* ===== 結帳按鈕（主按鈕感）===== */
+.checkout{
+  padding:22px;
+  font-size:26px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(135deg,#4caf50,#2e7d32);
+  color:#fff;
+  margin-top:6px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* ===== 今日資訊 ===== */
+.report{
+  margin-top:10px;
+  font-size:16px;
+  background:#fafafa;
+  padding:10px;
+  border-radius:8px;
+}
+
+/* ===== 商品管理頁 ===== */
+#page-products input{
+  margin:5px;
+  padding:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+#page-products button{
+  padding:10px 14px;
+  background:#4caf50;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+}
+
+#productList div{
+  margin:5px 0;
+  padding:8px;
+  background:#fff;
+  border-radius:6px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* ===== 歷史 ===== */
+#historyList div,
+#productStats div,
+#monthDaily div{
+  padding:8px;
+  margin:6px 0;
+  background:#fff;
+  border-radius:8px;
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+.item-row, .stats-row{
+  display:flex;
+  justify-content:space-between;
+  padding:8px;
+  margin:4px 0;
+  background:#fff;
+  border-radius:6px;
+}
+
+.order-block{
+  background:#fff;
+  padding:10px;
+  margin:8px 0;
+  border-radius:8px;
+}
+
+.items{
+  margin-left:10px;
+  color:#555;
+}
+
+/* 面板背景 */
+.panel{
+  position:fixed;
+  top:0;
+  right:-100%;
+  width:80%;
+  height:100%;
+  background:rgba(0,0,0,0.4);
+  transition:0.3s;
+  z-index:999;
+}
+
+/* 顯示 */
+.panel.show{
+  right:0;
+}
+
+/* 內容 */
+.panel-content{
+  position:absolute;
+  right:0;
+  width:100%;
+  height:100%;
+  background:#fff;
+  padding:15px;
+  overflow:auto;
+}
+
+/* 標題 */
+.panel-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:18px;
+  margin-bottom:10px;
+}
+
+/* 每筆訂單 */
+.panel-order{
+  background:#f5f5f5;
+  padding:10px;
+  margin:10px 0;
+  border-radius:8px;
+}
+
+/* 品項 */
+.items{
+  margin-left:10px;
+  color:#555;
+}
+
+
+/* ===== 商品按鈕升級 ===== */
+#posMenu button{
+  position:relative;
+  overflow:hidden;
+}
+
+/* 點擊回饋動畫 */
+#posMenu button:active::after{
+  content:"";
+  position:absolute;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.1);
+  top:0;
+  left:0;
+}
+
+/* 商品名稱 */
+#posMenu button{
+  font-weight:bold;
+}
+
+/* ===== 訂單操作升級 ===== */
+.order-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+/* + - 按鈕放大 */
+.order-item button{
+  padding:10px 14px;
+  font-size:18px;
+  border-radius:8px;
+  background:#eee;
+}
+
+/* ===== 訂單區滾動更順 ===== */
+#orderList{
+  scroll-behavior:smooth;
+}
+
+/* ===== 金額強化 ===== */
+.total{
+  letter-spacing:2px;
+}
+
+
+
+.stats-row{
+  display:flex;
+  justify-content:space-between;
+  padding:10px;
+  margin:6px 0;
+  background:#fff;
+  border-radius:8px;
+}
+
+.stats-row .left{
+  font-weight:bold;
+}
+
+.stats-row .right{
+  color:#333;
+}
+
+/* 總營收 */
+.stats-total{
+  margin-top:12px;
+  padding:12px;
+  background:#4caf50;
+  color:#fff;
+  text-align:center;
+  border-radius:10px;
+  font-size:18px;
+}
+
+.stats-card{
+  background:#fff;
+  padding:12px;
+  margin:8px 0;
+  border-radius:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.stats-card .name{
+  font-size:16px;
+  font-weight:bold;
+  margin-bottom:6px;
+}
+
+.stats-card .info{
+  display:flex;
+  justify-content:space-between;
+  color:#555;
+}
+
+.stats-total{
+  margin-top:15px;
+  padding:14px;
+  background:#ff9800;
+  color:#fff;
+  text-align:center;
+  border-radius:10px;
+  font-size:18px;
+  font-weight:bold;
+}
+
+
+
+
+/* 整體背景（半透明） */
+.num-pad{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.3);
+
+  display:flex;
+  justify-content:flex-end; /* 靠右 */
+  align-items:flex-end;     /* 靠下 */
+
+  opacity:0;
+  pointer-events:none;
+  transition:0.2s;
+  z-index:9999;
+}
+
+.num-pad.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* 鍵盤本體（重點） */
+.pad{
+  width:300px;            /* ⭐ 不再全寬 */
+  background:#222;
+  border-radius:12px 0 0 0;
+  padding:12px;
+
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+/* 按鈕 */
+.pad button{
+  font-size:18px;
+  padding:14px;
+  border:none;
+  border-radius:8px;
+  background:#444;
+  color:#fff;
+}
+
+/* 確定鍵 */
+.pad .confirm{
+  grid-column:span 3;
+  background:#4caf50;
+}
+
+.clear-btn{
+  background:#e53935;
+  color:#fff;
+}
+
+
+/* 平板模式 */
+@media (max-width: 1024px){
+
+  .container{
+    flex-direction: column;
+  }
+
+  .left{
+    width:100%;
+  }
+
+  .right{
+    width:100%;
+    position:fixed;
+    bottom:0;
+    left:0;
+    background:#fff;
+    padding:10px;
+    border-top:2px solid #ccc;
+  }
+
+  /* 商品按鈕變大 */
+  #posMenu button{
+    width:30%;
+    margin:1%;
+    font-size:18px;
+    padding:20px 10px;
+  }
+
+  /* 訂單區可滑動 */
+  #orderList{
+    max-height:150px;
+    overflow:auto;
+  }
+
+}
