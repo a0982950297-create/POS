@@ -17,12 +17,21 @@ let products = JSON.parse(localStorage.getItem("products"));
 let orders = JSON.parse(localStorage.getItem("orders"));
 let order = [];
 let currentCategory="全部";
-
-// ===== 分類順序（⭐關鍵）=====
 let categoryOrder = JSON.parse(localStorage.getItem("categoryOrder") || "null");
 
 if(!categoryOrder){
   categoryOrder = [...new Set(products.map(p=>p.category))];
+}
+
+cleanCategoryOrder(); 
+
+// ===== 分類順序（⭐關鍵）=====
+function cleanCategoryOrder(){
+  const productCategories = [...new Set(products.map(p=>p.category))];
+
+  // ⭐ 強制重新建立（更乾淨）
+  categoryOrder = productCategories;
+
   localStorage.setItem("categoryOrder", JSON.stringify(categoryOrder));
 }
 
